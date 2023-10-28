@@ -1,13 +1,33 @@
 # from lintcode import (
 #     TreeNode,
 # )
+from typing import (
+    List,
+)
 
-from collections import deque
 # Definition of TreeNode:
 class TreeNode:
     def __init__(self, val):
         self.val = val
         self.left, self.right = None, None
+
+        # if self.val is None:
+        #     self.val = val
+        # elif self.val < val and self.right is None:
+        #     self.right = val
+        # elif self.val > val and self.left is None:
+        #     self.left = val
+
+    def printInorder(self, root):
+        if root:
+            # First recur on left child
+            self.printInorder(root.left)
+    
+            # Then print the data of node
+            print(root.val, end=" "),
+    
+            # Now recur on right child
+            self.printInorder(root.right)
 
 
 class Solution:
@@ -16,6 +36,7 @@ class Solution:
     @return: the maximum weight node
 
     description: Given a binary tree, find the subtree with maximum sum. Return the root of the subtree.
+
     Input:
     {1,-5,2,0,3,-4,-5}
     Output:3
@@ -37,112 +58,105 @@ class Solution:
     There is one and only one subtree in the tree. So we return 1.
     """
 
-    def find_subtree01(self, root: TreeNode) -> TreeNode:
-        # write your code here
-        def check_subtree_sum (node, sum):
-            
-            if not node:
-                return None, 0
-            
-            if node.left is None and node.right is None:
-                return node, node.val
-            
-            if node.left:
-                left_sum = check_subtree_sum (node.left, sum)
-
-            if node.right:
-                right_sum = check_subtree_sum(node.right, sum)
-
-            curr_sum = int(left_sum[1]) + int(right_sum[1]) + int(node.val)
-            print("curr_sum", curr_sum)
-            return node, curr_sum
-        
-        max_sum = float("-inf")
-        queue = deque([root])
-        visited = []
-
-        while queue:
-
-            level_order = []
-            for _ in range(len(queue)):
-                node = queue.popleft()
-                val = node.val
-                level_order.append(node)
-
-                if len(level_order) == 1:
-                    node, curr_sum =  check_subtree_sum (root, 0)
-
-                if node.left:
-                    queue.append(node.left)
-                if node.right:
-                    queue.append(node.right)
-
-        # node, curr_sum =  check_subtree_sum (root, 0)
-        print("curr_sum", curr_sum)
-        
-        if curr_sum > max_sum:
-            max_node = node
-            max_sum = curr_sum
-        print(max_node, max_sum)
-        # return max_node
+    def find_subtree(self, root: TreeNode) -> TreeNode:
+        self.min_sum = float("inf")
+        self.min_sum_root = None
+        self.subtree_sum(root)
+        return self.min_sum_root
 
 
-    def find_subtree_sum(self, root: TreeNode) -> TreeNode:
-        self.max_sum = float("-inf")
-        self.max_sum_node = None
-        self.get_tree_sum(root)
-
-        return self.max_sum_node
-
-    def get_tree_sum(self, root: TreeNode) -> int:
-        #1) all leafs are subtree, 
-        #2) otherwise subtree_root needs to have at lease one child
-        #3) use tree traversal here
-        # if root:
-        #     if root.left is not None or root.right is not None: #has at least one child
-        #         return True
-        #     elif root.left is None and root.right is None: # leaf
-        #         return True
-
-        # return False
-        if root is None:
+    def subtree_sum (self, root): 
+    # we should use dfs here to first traverse all nodes
+        if not root:
             return 0
 
-        # if root.left is None and root.right is None: # this is the base case
-        #     # print("root, root.val")
-        #     # print(root, root.val)
-        #     return root.val
+        left_sum = self.subtree_sum(root.left)
+        right_sum = self.subtree_sum(root.right)
+        
+        total_sum = root.val + right_sum + left_sum
+
+        if total_sum < self. min_sum:
+            self.min_sum = total_sum
+            self.min_sum_root = root
+
+        return total_sum
     
+    def print_subtree(self, root): # this function can print subtree for each node using DFS
+        if root is None:
+            return []
 
-        left_sum =  self.get_tree_sum(root.left)
-        right_sum = self.get_tree_sum(root.right)
-        print(root.val, left_sum, right_sum)
-        curr_sum = root.val + left_sum + right_sum
+        subtree = [root.val]
 
-        # if root.left is not None:
-        #     left_sum =  self.get_tree_sum(root.left)
+        if root.left:
+            left_subtree = self.print_subtree(root.left)
+            subtree.extend(left_subtree) # in python, extend() concatenates the first list with another list/iterable.
+
+        if root.right:
+            right_subtree = self.print_subtree(root.right)
+            subtree.extend(right_subtree)
+
+        print("Subtree for node", root.val, ":", subtree)
+
+        return subtree
+    
+    def find_subtree02(self, root: TreeNode) -> TreeNode:
+                # path = [root] # this is our stack here. Remember in python, stack == list()
+        self.min_sum = float("inf")
+        self.min_sum_root = None
+        
+        # return self.min_sum_root
+        
+
+        def print_subtree(root):
+            if root is None:
+                return []
+
+            subtree = [root.val]
+
+            if root.left:
+                left_subtree = print_subtree(root.left)
+                subtree.extend(left_subtree)
+
+            if root.right:
+                right_subtree = print_subtree(root.right)
+                subtree.extend(right_subtree)
+
+            print("Subtree for node", root.val, ":", subtree)
+            curr_sum = sum(subtree)
+
+            if curr_sum < self.min_sum:
+                self.min_sum = curr_sum
+                self.min_sum_root = root
+
+            return subtree
+
             
-        
-        # if root.right is not None:
-        #     right_sum = self.get_tree_sum(root.right)
-        
+        print_subtree(root)
+        return self.min_sum_root
+# new_solution = Solution()
+# input_vals = {1,-5,2,0,3,-4,-5}
+# root = TreeNode(1)
+# root.left = TreeNode(-5)
+# root.right = TreeNode(2)
+# root.left.left = TreeNode(0)
+# root.left.right = TreeNode(3)
+# root.printInorder(root)
 
-        # curr_sum = root.val + left_sum + right_sum
+if __name__ == "__main__":
+    root = TreeNode(1)
+    root.left = TreeNode(-5)
+    root.right = TreeNode(2)
+    root.left.left = TreeNode(1)
+    root.left.right = TreeNode(2)
+    root.left.left.left = TreeNode(-4)
+    root.left.left.right = TreeNode(-5)
+ 
+    # Function call
+    print("Inorder traversal of binary tree is")
+    # root.printInorder(root)
+    new_solution = Solution()
+    new_solution.find_subtree(root)
 
-        if curr_sum > self.max_sum:
-            self.max_sum = curr_sum
-            self.max_sum_node = root
-
-        return curr_sum
 
 
-root = TreeNode(5)
-root.left = TreeNode(2)
-root.right = TreeNode(6)
-root.left.left = TreeNode(1)
-root.left.right = TreeNode(3)
-# root.left.left.left = TreeNode(-4)
-# root.left.left.right = TreeNode(-5)
-new_solution = Solution()
-result = new_solution.find_subtree_sum(root)
-print("result", result)
+
