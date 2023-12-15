@@ -43,7 +43,17 @@ class Solution:
             if not root.left and not root.right:
                 # result_list.append(root.val)
                 return
-
+        def dfs00(root: TreeNode, k1: int, k2: int):
+            if not root:
+                return
+            dfs(root.left, k1, k2)
+            dfs(root.right, k1, k2)
+            if root.val >= k1 and root.val <= k2:
+                result_list.append(root.val)
+                
+            if not root.left and not root.right:
+                # result_list.append(root.val)
+                return
         dfs(root, k1, k2)
         result_list.sort()
         return result_list
