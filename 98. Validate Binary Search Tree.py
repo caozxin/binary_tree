@@ -7,26 +7,21 @@
 class Solution:
     def isValidBST(self, root: Optional[TreeNode]) -> bool:
         
-        def inorder(node, pre_state):
-            if node is None:
-                # print(pre_state)
+        def dfs(root, min_val, max_val):
+            # empty nodes are always valid
+            if not root:
                 return True
 
-            if not inorder(node.left, pre_state): # we could move forward if left subtree is valid
+            if not (min_val < root.val < max_val):
                 return False
-            # print("curr: ", node.val, pre_state)
-            if pre_state and node.val <= pre_state[-1]:
-                    print("false!")
-                    return False
-                    
-            pre_state.append(node.val)
-            # pre_state = node.val
-            return inorder(node.right, pre_state)
-                # return False
-            # print("af: ", node.val)
-            # return node
-            # print(pre_state)
-            # return True
 
-        return inorder(root,[])
+            # see notes below
+            print('min_val, max_val')
+            print(min_val, max_val)
+            return dfs(root.left, min_val, root.val) and dfs(root.right, root.val, max_val)
+            
+            # min_val is updated when checking the right subtree → dfs(root.right, root.val, max_val).
+            # max_val is updated when checking the left subtree → dfs(root.left, min_val, root.val).
+            # This ensures that every node satisfies BST conditions as we traverse recursively.
 
+        return dfs(root, -inf, inf)  # root is always valid
