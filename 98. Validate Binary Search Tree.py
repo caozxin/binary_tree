@@ -1,27 +1,26 @@
 # Definition for a binary tree node.
-# class TreeNode:
-#     def __init__(self, val=0, left=None, right=None):
-#         self.val = val
-#         self.left = left
-#         self.right = right
+ # class TreeNode:
+ #     def __init__(self, val=0, left=None, right=None):
+ #         self.val = val
+ #         self.left = left
+ #         self.right = right
 class Solution:
-    def isValidBST(self, root: Optional[TreeNode]) -> bool:
-        
-        def dfs(root, min_val, max_val):
-            # empty nodes are always valid
-            if not root:
-                return True
-
-            if not (min_val < root.val < max_val):
+     def isValidBST(self, root: Optional[TreeNode]) -> bool:
+         
+         def inorder_validation(node, pre_state):
+             if node is None:
+                 return True # if we finish traversal and all validation checks out, then we should return true
+ 
+             if not inorder_validation(node.left, pre_state): # we only move forward if left subtree is valid
+                print(" left false!")
                 return False
 
-            # see notes below
-            print('min_val, max_val')
-            print(min_val, max_val)
-            return dfs(root.left, min_val, root.val) and dfs(root.right, root.val, max_val)
-            
-            # min_val is updated when checking the right subtree → dfs(root.right, root.val, max_val).
-            # max_val is updated when checking the left subtree → dfs(root.left, min_val, root.val).
-            # This ensures that every node satisfies BST conditions as we traverse recursively.
+             if pre_state and node.val <= pre_state[-1]:
+                print("false!")
+                return False
+                     
+             pre_state.append(node.val)
 
-        return dfs(root, -inf, inf)  # root is always valid
+             return inorder_validation(node.right, pre_state) # we continue to traversal to right until node is null. If the right subtree is invalid, we will return False right away. 
+
+         return inorder_validation(root,[])
