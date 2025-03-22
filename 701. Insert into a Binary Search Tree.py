@@ -8,18 +8,19 @@ class TreeNode:
         self.right = right
 
 class Solution:
-    def insertIntoBST(self, root: Optional[TreeNode], val: int) -> Optional[TreeNode]:
-        # if root is None:
-        #     return TreeNode(val) # If tree is empty, return new node as root
-        
-        def search(node, val):
-            if node is None:
-                return TreeNode(val)  # Create new node when reaching a leaf
-            if node.val > val:
-                node.left = search(node.left, val)  # Keep searching
-            elif node.val < val:
-                node.right = search(node.right, val)  # Keep searching
-            return node  # Return the node to maintain structure
+    def insertIntoBST(self, root: TreeNode, val: int) -> TreeNode:
+        if not root:
+            return TreeNode(val) # this is our exsit from recursion call! 
 
-        search(root, val)  # Start inserting from the root
-        return root  # Return modified root
+        if root.val < val:
+            if not root.right: # if the node has no right child and the node.val < target val, TreeNode(val) should be its right child
+                root.right = TreeNode(val)
+            else: # if the node has another right child, we will continue searching 
+                self.insertIntoBST(root.right, val)
+        else:
+            if not root.left: # if the node has no left child and node.val > target.val, TreeNode(val) should be its left child
+                root.left = TreeNode(val)
+            else:# if the node has another right child, we will continue searching 
+                self.insertIntoBST(root.left, val)
+
+        return root # here we return the updated node from child to parent
