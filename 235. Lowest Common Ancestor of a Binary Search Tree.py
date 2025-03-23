@@ -19,13 +19,15 @@ class Solution:
             elif node.val == q.val:
                 if_p_q[1] = True
             print(node.val, if_p_q)
-
-            left = dfs_checks(node.left, p, q, if_p_q) # you have to traversal both subtress. 
-            right = dfs_checks(node.right, p, q, if_p_q)
-
             if if_p_q[0] and if_p_q[1]: 
                 print("both true", node.val)
-                return True
+                return node
+            if node.val < p.val and node.val < q.val: 
+                dfs_checks(node.left, p, q, if_p_q) # you have to traversal both subtress. 
+            elif node.val > p.val and node.val > q.val: 
+                dfs_checks(node.right, p, q, if_p_q)
+            else:
+                return node 
 
         if_p_q = [False, False]
-        print(dfs_checks (root, p, q, if_p_q))
+        dfs_checks (root, p, q, if_p_q)
