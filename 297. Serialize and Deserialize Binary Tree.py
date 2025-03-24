@@ -14,12 +14,13 @@ class Codec:
         :rtype: str
         """
         # print(root)
+        if not root:
+            return ""
+
         def dfs_decode(root, res_list): 
             if not root:
                 return res_list.append('N') # we need to mark the leaf node
-            # print(root.val)
             res_list.append(str(root.val))
-            # res_list.append(root.val)
 
             left = dfs_decode(root.left, res_list)
             right = dfs_decode(root.right, res_list)
@@ -27,16 +28,14 @@ class Codec:
             return res_list
 
         decoded = dfs_decode(root, [])
-        # print(decoded)
-        return str(decoded)
+        return " ".join(decoded)
 
     def deserialize(self, data):
         """Decodes your encoded data to tree."""
         if not data or data == 'None':
             return None
-
-        data_lst = ast.literal_eval(data)  # Convert string back to list
-
+        # print(data, type(data))
+        data_lst = data.split()
         def dfs_decode():
             if not data_lst:
                 return None
