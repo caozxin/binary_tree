@@ -15,10 +15,11 @@ class Codec:
         """
         def dfs_decode(root, res_list): 
             if not root:
-                return []
+                return res_list.append('N') # we need to mark the leaf node
             print(root.val)
             # res_list.append(str(root.val))
             res_list.append(root.val)
+
             left = dfs_decode(root.left, res_list)
             right = dfs_decode(root.right, res_list)
             
